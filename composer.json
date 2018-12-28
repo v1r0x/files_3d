@@ -1,0 +1,15 @@
+{
+    "name": "Files Three",
+    "description": "3D viewer for nextcloud",
+    "type": "project",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "Vinzenz Rosenkranz"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    }
+}

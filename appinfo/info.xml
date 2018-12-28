@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>files_3d</id>
+    <name>Files 3d</name>
+    <summary>3D viewer for nextcloud</summary>
+    <description><![CDATA[Adds support for different 3D file formats to Nextcloud]]></description>
+    <version>0.0.1</version>
+    <licence>agpl</licence>
+    <author mail="vinzenz.rosenkranz@gmail.com" >Vinzenz Rosenkranz</author>
+    <namespace>Files3d</namespace>
+    <category>tools</category>
+    <bugs>http://github.com/v1r0x/files_3d/issues</bugs>
+    <dependencies>
+        <nextcloud min-version="14" max-version="16"/>
+    </dependencies>
+    <navigations>
+        <navigation>
+            <name>Files 3d</name>
+            <route>filesthree.page.index</route>
+        </navigation>
+    </navigations>
+</info>
