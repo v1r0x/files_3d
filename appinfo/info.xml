@@ -6,7 +6,7 @@
     <summary>3D viewer for nextcloud</summary>
     <description>Adds support for different 3D file formats (.dae, .fbx, .gltf, .obj) to Nextcloud. Based on three.js.</description>
     <version>0.0.1</version>
-    <licence>mit</licence>
+    <licence>agpl</licence>
     <author mail="vinzenz.rosenkranz@gmail.com">Vinzenz Rosenkranz</author>
     <namespace>Files3d</namespace>
     <category>tools</category>

@@ -1,4 +1,4 @@
-# Files Three
+# files_3d
 Place this app in **nextcloud/apps/**
 
 ## Building the app
@@ -24,7 +24,6 @@ The make command will install or update Composer dependencies if a composer.json
     "build": "node node_modules/gulp-cli/bin/gulp.js"
 }
 ```
-
 
 ## Publish to App Store
 
