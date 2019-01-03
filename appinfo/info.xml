@@ -17,7 +17,7 @@
     </documentation>
     <website>https://github.com/v1r0x/files_3d</website>
     <bugs>https://github.com/v1r0x/files_3d/issues</bugs>
-    <screenshot>https://github.com/v1r0x/files_3d/master/screenshots/screenshot1.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/v1r0x/files_3d/master/screenshots/screenshot1.png</screenshot>
     <dependencies>
         <nextcloud min-version="14" max-version="16"/>
     </dependencies>
