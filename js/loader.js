@@ -7,28 +7,12 @@ var loaderCtx = {
                 deferred.resolve();
             } else {
                 this.inited = true;
-                var threeScript = OC.filePath('files_3d', 'js/vendor', 'three.min.js');
-                var script = document.createElement('script');
-                script.src = threeScript;
-                script.setAttribute('nonce', btoa(OC.requestToken));
-                script.onload = function() {
-                    var orbitCtrl = OC.filePath('files_3d', 'js/vendor/controls', 'OrbitControls.js');
-                    var ocScr = document.createElement('script');
-                    ocScr.src = orbitCtrl;
-                    ocScr.setAttribute('nonce', btoa(OC.requestToken));
-                    ocScr.onload = function() {
-                        var vm = loaderCtx.three;
-                        vm.renderedTmpl = $(vm.template);
-                        vm.renderedTmpl.appendTo('body');
-                        vm.container = document.getElementById('files-3d-container');
-                        vm.startup();
-                        deferred.resolve();
-                    };
-                    document.head.appendChild(ocScr);
-                };
-                document.head.appendChild(script);
+                this.renderedTmpl = $(this.template);
+                this.renderedTmpl.appendTo('body');
+                this.container = document.getElementById('files-3d-container');
+                this.startup();
+                deferred.resolve();
             }
-
             return deferred;
         },
         startup: function() {
@@ -112,6 +96,12 @@ var loaderCtx = {
         showModel: function(model) {
             model.castShadow = true;
             model.receiveShadow = true;
+			model.traverse(function(child) {
+				if(child.isMesh) {
+					child.castShadow = true;
+					child.receiveShadow = true;
+				}
+			});
             this.scene.add(model);
             this.animate();
         },
@@ -146,51 +136,27 @@ var loaderCtx = {
         loaderCtx.showThree();
     },
     getLoader: function(mime) {
-        if(!mime) {
-            return $.when();
-        } else {
-            var name, loader;
-            switch(mime) {
-                case 'model/vnd.collada+xml':
-                    name = 'ColladaLoader.js';
-                    break;
-                case 'model/gltf-binary':
-                case 'model/gltf+json':
-                    name = 'GLTFLoader.js';
-                    break;
-                default:
-                    return $.when();
-            }
-            var loaderScript = OC.filePath('files_3d', 'js/vendor/loaders', name);
-            var deferred = $.Deferred();
-            var script = document.createElement('script');
-            script.src = loaderScript;
-            script.setAttribute('nonce', btoa(OC.requestToken));
-            script.onload = function() {
-                try {
-                    switch(mime) {
-                        case 'model/vnd.collada+xml':
-                            loader = new THREE.ColladaLoader();
-                            break;
-                        case 'model/gltf-binary':
-                        case 'model/gltf+json':
-                            loader = new THREE.GLTFLoader();
-                            break;
-                    }
-                } catch(e) {
-                    console.log(e);
-                }
-                deferred.resolve(loader);
-            };
-            document.head.appendChild(script);
-
-            return deferred;
+        var loader;
+        switch(mime) {
+            case 'model/vnd.collada+xml':
+                loader = new THREE.ColladaLoader();
+                break;
+            case 'model/gltf-binary':
+            case 'model/gltf+json':
+                loader = new THREE.GLTFLoader();
+                break;
+            case 'model/obj-dummy':
+                loader = new THREE.OBJLoader2();
+                break;
+            case 'model/fbx-dummy':
+                loader = new THREE.FBXLoader();
+                break;
         }
+        return loader;
     },
     showThree: function() {
         loaderCtx.three.initThreeJs().then(function() {
-            return loaderCtx.getLoader(loaderCtx.mime);
-        }).then(function(loader) {
+            var loader= loaderCtx.getLoader(loaderCtx.mime);
             switch(loaderCtx.mime) {
                 case 'model/vnd.collada+xml':
                 case 'model/gltf-binary':
@@ -200,6 +166,19 @@ var loaderCtx = {
                     }, null, function(e) {
                         console.log(e);
                     });
+                    break;
+                case 'model/fbx-dummy':
+                    loader.load(loaderCtx.location, function(model) {
+                        loaderCtx.three.showModel(model);
+                    }, null, function(e) {
+                        console.log(e);
+                    });
+                    break;
+                case 'model/obj-dummy':
+                    loader.load(loaderCtx.location, function(event) {
+                        loaderCtx.three.showModel(event.detail.loaderRootNode);
+                    }, null, null, null, false);
+                    // last argument (async) needs CSP (blob as child-src)
                     break;
             }
         });
@@ -215,7 +194,9 @@ var loaderCtx = {
     mimeTypes: [
         'model/vnd.collada+xml',
         'model/gltf-binary',
-        'model/gltf+json'
+        'model/gltf+json',
+        'model/obj-dummy',
+        'model/fbx-dummy'
     ]
 };
 
