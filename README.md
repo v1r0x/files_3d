@@ -6,7 +6,9 @@ Place this app in **nextcloud/apps/**
 This app might require an additional manual step to work. 3D files may lack a proper mimetype and thus not recognized by this app. To fix the mimetypes, setup [mimetype mapping](https://docs.nextcloud.com/server/stable/admin_manual/configuration_mimetypes/index.html#mimetype-mapping) for your instance and add these lines to the array in `config/mimetypemapping.json`:
 ```bash
 "dae": ["model/vnd.collada+xml"],
-"gltf": ["model/gltf-binary", "model/gltf+json"]
+"fbx": ["model/fbx-dummy"],
+"gltf": ["model/gltf-binary", "model/gltf+json"],
+"obj": ["model/obj-dummy"]
 ```
 
 Run the mimetype update `occ` command and (re-)upload your 3d files.
