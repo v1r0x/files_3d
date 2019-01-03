@@ -193,12 +193,13 @@ var loaderCtx = {
         }).then(function(loader) {
             switch(loaderCtx.mime) {
                 case 'model/vnd.collada+xml':
-                    loader.load(loaderCtx.location, function(collada) {
-                        loaderCtx.three.showModel(collada.scene);
-    				});
-                    break;
                 case 'model/gltf-binary':
                 case 'model/gltf+json':
+                    loader.load(loaderCtx.location, function(model) {
+                        loaderCtx.three.showModel(model.scene);
+                    }, null, function(e) {
+                        console.log(e);
+                    });
                     break;
             }
         });
