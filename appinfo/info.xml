@@ -10,7 +10,14 @@
     <author mail="vinzenz.rosenkranz@gmail.com">Vinzenz Rosenkranz</author>
     <namespace>Files3d</namespace>
     <category>tools</category>
-    <bugs>http://github.com/v1r0x/files_3d/issues</bugs>
+    <documentation>
+	    <!-- <user>https://github.com/v1r0x/files_3d</user> -->
+	    <admin>https://github.com/v1r0x/files_3d</admin>
+	    <developer>https://github.com/v1r0x/files_3d</developer>
+    </documentation>
+    <website>https://github.com/v1r0x/files_3d</website>
+    <bugs>https://github.com/v1r0x/files_3d/issues</bugs>
+    <screenshot>https://github.com/v1r0x/files_3d/master/screenshots/screenshot1.png</screenshot>
     <dependencies>
         <nextcloud min-version="14" max-version="16"/>
     </dependencies>
