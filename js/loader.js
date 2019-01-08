@@ -151,6 +151,9 @@ var loaderCtx = {
             case 'model/fbx-dummy':
                 loader = new THREE.FBXLoader();
                 break;
+            case 'application/sla':
+                loader = new THREE.STLLoader();
+                break;
         }
         return loader;
     },
@@ -180,6 +183,19 @@ var loaderCtx = {
                     }, null, null, null, false);
                     // last argument (async) needs CSP (blob as child-src)
                     break;
+                case 'application/sla':
+                    loader.load(loaderCtx.location, function(geometry) {
+                        const material = new THREE.MeshPhongMaterial({
+                            color: 0xAAAAAA,
+                            specular: 0x111111,
+                            shininess: 200
+                        });
+                        const mesh = new THREE.Mesh(geometry, material);
+                        loaderCtx.three.showModel(mesh);
+                    }, null, function(e) {
+                        console.log(e);
+                    });
+                    break;
             }
         });
     },
@@ -196,7 +212,8 @@ var loaderCtx = {
         'model/gltf-binary',
         'model/gltf+json',
         'model/obj-dummy',
-        'model/fbx-dummy'
+        'model/fbx-dummy',
+        'application/sla'
     ]
 };
 

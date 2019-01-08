@@ -8,7 +8,8 @@ This app might require an additional manual step to work. 3D files may lack a pr
 "dae": ["model/vnd.collada+xml"],
 "fbx": ["model/fbx-dummy"],
 "gltf": ["model/gltf-binary", "model/gltf+json"],
-"obj": ["model/obj-dummy"]
+"obj": ["model/obj-dummy"],
+"stl": ["application/sla"]
 ```
 
 Run the mimetype update `occ` command and (re-)upload your 3d files.

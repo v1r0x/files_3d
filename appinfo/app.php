@@ -32,4 +32,5 @@ OCP\Util::addScript('files_3d', 'vendor/loaders/FBXLoader');
 OCP\Util::addScript('files_3d', 'vendor/loaders/GLTFLoader');
 OCP\Util::addScript('files_3d', 'vendor/loaders/OBJLoader2');
 OCP\Util::addScript('files_3d', 'vendor/loaders/MTLLoader');
+OCP\Util::addScript('files_3d', 'vendor/loaders/STLLoader');
 OCP\Util::addScript('files_3d', 'loader');
