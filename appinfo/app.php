@@ -24,6 +24,7 @@
 
 OCP\Util::addStyle('files_3d', 'style');
 OCP\Util::addScript('files_3d', 'vendor/three.min');
+OCP\Util::addScript('files_3d', 'vendor/dxf-parser');
 OCP\Util::addScript('files_3d', 'vendor/controls/OrbitControls');
 OCP\Util::addScript('files_3d', 'vendor/libs/inflate.min');
 OCP\Util::addScript('files_3d', 'vendor/loaders/LoaderSupport');
@@ -33,4 +34,5 @@ OCP\Util::addScript('files_3d', 'vendor/loaders/GLTFLoader');
 OCP\Util::addScript('files_3d', 'vendor/loaders/OBJLoader2');
 OCP\Util::addScript('files_3d', 'vendor/loaders/MTLLoader');
 OCP\Util::addScript('files_3d', 'vendor/loaders/STLLoader');
+OCP\Util::addScript('files_3d', 'vendor/loaders/DXFLoader');
 OCP\Util::addScript('files_3d', 'loader');

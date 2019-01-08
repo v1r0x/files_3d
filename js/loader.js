@@ -154,12 +154,15 @@ var loaderCtx = {
             case 'application/sla':
                 loader = new THREE.STLLoader();
                 break;
+            case 'image/vnd.dxf':
+                loader = new THREE.DXFLoader();
+                break;
         }
         return loader;
     },
     showThree: function() {
         loaderCtx.three.initThreeJs().then(function() {
-            var loader= loaderCtx.getLoader(loaderCtx.mime);
+            var loader = loaderCtx.getLoader(loaderCtx.mime);
             switch(loaderCtx.mime) {
                 case 'model/vnd.collada+xml':
                 case 'model/gltf-binary':
@@ -196,6 +199,19 @@ var loaderCtx = {
                         console.log(e);
                     });
                     break;
+                case 'image/vnd.dxf':
+                    const fontLoader = new THREE.FontLoader();
+                    const fontUrl = OC.filePath('files_3d', 'fonts', 'json/FiraSans-Regular.json');
+                    fontLoader.load(fontUrl, function(font) {
+                        // loaderCtx.three.scene.add(font);
+                        loader.setFont(font);
+                        loader.load(loaderCtx.location, function(model) {
+                            loaderCtx.three.showModel(model);
+                        }, null, function(e) {
+                            console.log(e);
+                        });
+                    });
+                    break;
             }
         });
     },
@@ -213,7 +229,8 @@ var loaderCtx = {
         'model/gltf+json',
         'model/obj-dummy',
         'model/fbx-dummy',
-        'application/sla'
+        'application/sla',
+        'image/vnd.dxf'
     ]
 };
 
