@@ -5,12 +5,6 @@
 // Depends on dxf-parser
 // https://github.com/gdsestimating/dxf-parser
 
-if (typeof THREE == 'undefined' && typeof require != 'undefined')
-    var THREE = require('three');
-
-if (typeof DxfParser == 'undefined' && typeof require != 'undefined')
-    var DxfParser = require('dxf-parser');
-
 /**
  * Returns the angle in radians of the vector (p1,p2). In other words, imagine
  * putting the base of the vector at coordinates (0,0) and finding the angle
@@ -105,14 +99,12 @@ THREE.DXFLoader.prototype = {
     },
 
     setFont: function (font) {
-        console.log(this);
-        console.log(this.font);
         this.font = font;
     },
 
     parse: function (data) {
 
-        var group = new THREE.Object3D();
+        var group = new THREE.Group();
 
         var i, entity, obj;
 
@@ -137,10 +129,7 @@ THREE.DXFLoader.prototype = {
             }
 
             if (obj) {
-
-                obj.matrixAutoUpdate = false;
                 group.add(obj);
-
             }
             obj = null;
         }
@@ -201,23 +190,6 @@ THREE.DXFLoader.prototype = {
             } else {
                 material = new THREE.LineBasicMaterial({linewidth: 1, color: color});
             }
-
-            // if(lineType && lineType.pattern && lineType.pattern.length !== 0) {
-
-            //           geometry.computeLineDistances();
-
-            //           // Ugly hack to add diffuse to this. Maybe copy the uniforms object so we
-            //           // don't add diffuse to a material.
-            //           lineType.material.uniforms.diffuse = { type: 'c', value: new THREE.Color(color) };
-
-            // 	material = new THREE.ShaderMaterial({
-            // 		uniforms: lineType.material.uniforms,
-            // 		vertexShader: lineType.material.vertexShader,
-            // 		fragmentShader: lineType.material.fragmentShader
-            // 	});
-            // }else {
-            // 	material = new THREE.LineBasicMaterial({ linewidth: 1, color: color });
-            // }
 
             line = new THREE.Line(geometry, material);
             return line;
@@ -342,13 +314,13 @@ THREE.DXFLoader.prototype = {
         }
 
         function getColor(entity, data) {
-            var color = 0x000000; //default
+            var color = 0xdddddd; //default
             if (entity.color) color = entity.color;
             else if (data.tables && data.tables.layer && data.tables.layer.layers[entity.layer])
                 color = data.tables.layer.layers[entity.layer].color;
 
-            if (color == null || color === 0xffffff) {
-                color = 0x000000;
+            if (color == null) {
+                color = 0xdddddd;
             }
             return color;
         }
