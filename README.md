@@ -11,9 +11,21 @@ This app might require an additional manual step to work. 3D files may lack a pr
 "obj": ["model/obj-dummy"]
 ```
 
+**Please note**: If you do not already have a `confog/mimetypemapping.json`, make sure to wrap these lines in an JSON Object (`{}`).
+```bash
+{
+    "dae": ["model/vnd.collada+xml"],
+    "fbx": ["model/fbx-dummy"],
+    "gltf": ["model/gltf-binary", "model/gltf+json"],
+    "obj": ["model/obj-dummy"]
+}
+```
+
 Run the mimetype update `occ` command and (re-)upload your 3d files.
 
 ## Building the app
+
+**Please note**: Currently, all required files are bundled, no need to build. But this is for testing stage only. In a later stage I plan to support the `make` build process below.
 
 The app can be built by using the provided Makefile by running:
 
