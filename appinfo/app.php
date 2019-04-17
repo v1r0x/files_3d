@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
- * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,14 +22,10 @@
  *
  */
 
-OCP\Util::addStyle('files_3d', 'style');
-OCP\Util::addScript('files_3d', 'vendor/three.min');
-OCP\Util::addScript('files_3d', 'vendor/controls/OrbitControls');
-OCP\Util::addScript('files_3d', 'vendor/libs/inflate.min');
-OCP\Util::addScript('files_3d', 'vendor/loaders/LoaderSupport');
-OCP\Util::addScript('files_3d', 'vendor/loaders/ColladaLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/FBXLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/GLTFLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/OBJLoader2');
-OCP\Util::addScript('files_3d', 'vendor/loaders/MTLLoader');
-OCP\Util::addScript('files_3d', 'loader');
+ $eventDispatcher = \OC::$server->getEventDispatcher();
+ $eventDispatcher->addListener(
+ 	'OCA\Files::loadAdditionalScripts',
+ 	function() {
+ 		\OCP\Util::addScript('files_3d', 'files3d');
+ 	}
+ );
