@@ -20,31 +20,35 @@
  *
  */
 
-import Files3d from './components/Files3d.vue';
+import Files3d from 'Components/Files3d'
 
-OCA.Viewer.registerHandler({
-     // unique id
-     id: 'files_3d',
+document.addEventListener('DOMContentLoaded', function() {
+	if (OCA.Viewer) {
+		OCA.Viewer.registerHandler({
+			// unique id
+			id: 'files_3d',
 
-    // optional, it will group every view of this group and
-    // use the proper view when building the file list
-    // of the slideshow.
-    // e.g. you open an image/jpeg that have the `media` group
-    // you will be able to see the video/mpeg from the `video` handler
-    // files that also have the `media` group set.
-    group: 'media',
+			// optional, it will group every view of this group and
+			// use the proper view when building the file list
+			// of the slideshow.
+			// e.g. you open an image/jpeg that have the `media` group
+			// you will be able to see the video/mpeg from the `video` handler
+			// files that also have the `media` group set.
+			group: 'media',
 
-    // the list of mimes your component is able to display
-    mimes: [
-        "model/vnd.collada+xml",
-        "model/gltf-binary",
-        "model/gltf+json",
-        'model/obj-dummy',
-        'model/fbx-dummy'
-        // FBX has no mime
-        // OBJ has no mime
-     ],
+			// the list of mimes your component is able to display
+			mimes: [
+				'model/vnd.collada+xml',
+				'model/gltf-binary',
+				'model/gltf+json',
+				'model/obj-dummy',
+				'model/fbx-dummy'
+				// FBX has no mime
+				// OBJ has no mime
+			],
 
-     // your vue component view
-     component: Files3d
- })
+			// your vue component view
+			component: Files3d
+		})
+	}
+})

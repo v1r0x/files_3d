@@ -21,25 +21,26 @@
  -->
 
 <template>
-    <renderer :size="{w: 600, h: 400}">
-        <scene>
-            <camera :position="{ z: 5 }"></camera>
-            <mesh :obj="path"></mesh>
-        </scene>
-    </renderer>
+	<renderer :size="{w: 600, h: 400}">
+		<scene>
+			<camera :position="{ z: 5 }"></camera>
+			<mesh :obj="path"></mesh>
+		</scene>
+	</renderer>
 </template>
 
 <script>
 // import axios from 'axios'
-import Vue from 'vue'
-import VueThreejs from 'vue-threejs'
-Vue.use(VueThreejs)
+// import Vue from 'vue'
+// import VueThreejs from 'vue-threejs'
+// Vue.use(VueThreejs)
 
 export default {
 	name: 'Files3d',
-    props: ['mime', 'path'],
+	props: ['mime', 'path'],
 	data() {
 		return {
+			mesh: null
 		}
 	},
 	computed: {
@@ -48,11 +49,12 @@ export default {
 		active: function(val, old) {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
-
+				this.mesh = val
 			}
 		}
 	},
 	mounted() {
+		alert(this.path)
 	},
 	methods: {
 		// Updates the dimensions of the modal
@@ -61,7 +63,7 @@ export default {
 			this.naturalWidth = this.$el.naturalWidth
 			this.updateHeightWidth()
 			this.doneLoading()
-		},
+		}
 	}
 }
 </script>
