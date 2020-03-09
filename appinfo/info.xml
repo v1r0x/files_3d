@@ -9,6 +9,9 @@
     <licence>agpl</licence>
     <author mail="vinzenz.rosenkranz@gmail.com">Vinzenz Rosenkranz</author>
     <namespace>Files3d</namespace>
+    <types>
+        <filesystem/>
+    </types>
     <category>tools</category>
     <documentation>
 	    <!-- <user>https://github.com/v1r0x/files_3d</user> -->
@@ -21,4 +24,9 @@
     <dependencies>
         <nextcloud min-version="14" max-version="16"/>
     </dependencies>
+    <repair-steps>
+        <install>
+            <step>OCA\Files3d\Migration\AddMimetypeToFilecache</step>
+        </install>
+    </repair-steps>
 </info>
