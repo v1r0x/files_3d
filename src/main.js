@@ -20,7 +20,7 @@
  *
  */
 
-import Files3d from 'Components/Files3d'
+import Files3d from './components/Files3d.vue';
 
 document.addEventListener('DOMContentLoaded', function() {
 	if (OCA.Viewer) {
@@ -41,14 +41,14 @@ document.addEventListener('DOMContentLoaded', function() {
 				'model/vnd.collada+xml',
 				'model/gltf-binary',
 				'model/gltf+json',
-				'model/obj-dummy',
-				'model/fbx-dummy'
-				// FBX has no mime
 				// OBJ has no mime
+				'model/obj-dummy',
+				// FBX has no mime
+				'model/fbx-dummy'
 			],
 
 			// your vue component view
 			component: Files3d
-		})
+		});
 	}
-})
+});

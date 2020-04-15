@@ -21,26 +21,32 @@
  -->
 
 <template>
-	<renderer :size="{w: 600, h: 400}">
-		<scene>
-			<camera :position="{ z: 5 }"></camera>
-			<mesh :obj="path"></mesh>
-		</scene>
-	</renderer>
+	<div id="threejs-container">
+
+	</div>
 </template>
 
 <script>
-// import axios from 'axios'
-// import Vue from 'vue'
-// import VueThreejs from 'vue-threejs'
-// Vue.use(VueThreejs)
+import Vue from 'vue'
+
+import {
+	PCFSoftShadowMap,
+	PerspectiveCamera,
+	Scene,
+	Vector3,
+	WebGLRenderer
+} from 'three';
 
 export default {
 	name: 'Files3d',
 	props: ['mime', 'path'],
 	data() {
 		return {
-			mesh: null
+			container: null,
+			renderer: null,
+			camera: null,
+			scene: null,
+			mesh: null,
 		}
 	},
 	computed: {
@@ -49,12 +55,45 @@ export default {
 		active: function(val, old) {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
-				this.mesh = val
+				console.log('now active')
 			}
 		}
 	},
 	mounted() {
-		alert(this.path)
+		if (!this.container) {
+			this.container = document.getElementById('threejs-container');
+
+			this.renderer = new WebGLRenderer({
+				antialias: true
+			});
+			this.renderer.setSize(this.$el.naturalWidth, this.$el.naturalHeight);
+			this.renderer.shadowMap.enabled = true;
+			this.renderer.shadowMap.type = PCFSoftShadowMap;
+
+			this.camera = new PerspectiveCamera(45, this.$el.naturalWidth/this.$el.naturalHeight, 0.1, 2000);
+			this.camera.position.set(5, 0, 0);
+			this.camera.lookAt(new Vector3(0, 0, 0));
+			this.camera.up.set(0, 1, 0);
+
+			this.scene = new Scene();
+
+			this.container.appendChild(this.renderer.domElement);
+			this.scene.add(this.camera);
+			console.log(this.mime, this.path);
+		}
+	},
+	destroyed() {
+		for (let i=this.scene.children.length-1; i>=0; i--) {
+			let obj = this.scene.children[i];
+			if (obj.geometry) obj.geometry.dispose();
+			if (obj.material) obj.material.dispose();
+			this.scene.remove(obj);
+		}
+		this.renderer.forceContextLoss();
+		this.renderer.dispose();
+		this.renderer = null;
+		this.scene = null;
+		this.container = null;
 	},
 	methods: {
 		// Updates the dimensions of the modal

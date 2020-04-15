@@ -40,6 +40,10 @@ module.exports = {
 	},
 	plugins: ['vue', 'node'],
 	rules: {
+		'semi': 0,
+		'space-infix-ops': 0,
+		'comma-dangle': 0,
+		'no-unused-vars': 0,
 		// space before function ()
 		'space-before-function-paren': ['error', 'never'],
 		// curly braces always space
@@ -53,7 +57,7 @@ module.exports = {
 		'no-tabs': 0,
 		'vue/html-indent': ['error', 'tab'],
 		// only debug console
-		'no-console': ['error', { allow: ['error', 'warn', 'info', 'debug'] }],
+		'no-console': ['off', { allow: ['error', 'warn', 'info', 'debug'] }],
 		// classes blocks
 		'padded-blocks': ['error', { classes: 'always' }],
 		// always have the operator in front
