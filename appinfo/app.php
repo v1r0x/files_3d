@@ -29,3 +29,15 @@
  		\OCP\Util::addScript('files_3d', 'files3d');
  	}
  );
+
+use OC\Files\Type\Detection;
+
+$mimeTypeDetector = \OC::$server->getMimeTypeDetector();
+if ($mimeTypeDetector instanceof Detection) {
+    /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
+    $mimeTypeDetector->getAllMappings();
+    $mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
+    $mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
+    $mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
+    $mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
+}
