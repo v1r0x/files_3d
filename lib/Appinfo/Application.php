@@ -25,16 +25,32 @@
 namespace OCA\Files3d\AppInfo;
 
 use OCA\Viewer\Event\LoadViewer;
-use OCA\Viewer\Listener\LoadViewerScript;
+use OCA\Files3d\Listener\LoadFiles3dScript;
 use OCP\AppFramework\App;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IMimeTypeDetector;
 
 class Application extends App {
-    public function __construct() {
-        parent::__construct('files_3d');
+
+    const APP_ID = 'files_3d';
+    private $mimeTypeDetector;
+
+    public function __construct(IMimeTypeDetector $mimeTypeDetector) {
+        parent::__construct(self::APP_ID);
+
+        $this->mimeTypeDetector = $mimeTypeDetector;
 
         $server = $this->getContainer()->getServer();
         $eventDispatcher = $server->query(IEventDispatcher::class);
-        $eventDispatcher->addServiceListener(LoadViewer::class, LoadViewerScript::class);
+        $eventDispatcher->addServiceListener(LoadViewer::class, LoadFiles3dScript::class);
+    }
+
+    public function register() {
+        /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
+        $this->mimeTypeDetector->getAllMappings();
+        $this->mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
+        $this->mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
+        $this->mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
+        $this->mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
     }
 }

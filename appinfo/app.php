@@ -26,14 +26,5 @@ namespace OCA\Files3d\AppInfo;
 
 use OC\Files\Type\Detection;
 
-\OC::$server->query(Application::class);
-
-$mimeTypeDetector = \OC::$server->getMimeTypeDetector();
-if ($mimeTypeDetector instanceof Detection) {
-    /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
-    $mimeTypeDetector->getAllMappings();
-    $mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
-    $mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
-    $mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
-    $mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
-}
+$app = \OC::$server->query(Application::class);
+$app->register();
