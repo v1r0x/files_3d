@@ -20,7 +20,7 @@
  *
  */
 
-import Files3d from './components/Files3d.vue';
+import Files3d from './components/Files3d.vue'
 
 document.addEventListener('DOMContentLoaded', function() {
 	if (OCA.Viewer) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			// e.g. you open an image/jpeg that have the `media` group
 			// you will be able to see the video/mpeg from the `video` handler
 			// files that also have the `media` group set.
-			group: 'media',
+			group: '3d',
 
 			// the list of mimes your component is able to display
 			mimes: [
@@ -44,11 +44,11 @@ document.addEventListener('DOMContentLoaded', function() {
 				// OBJ has no mime
 				'model/obj-dummy',
 				// FBX has no mime
-				'model/fbx-dummy'
+				'model/fbx-dummy',
 			],
 
 			// your vue component view
-			component: Files3d
-		});
+			component: Files3d,
+		})
 	}
-});
+})

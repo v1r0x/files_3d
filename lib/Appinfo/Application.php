@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
+ * @copyright Copyright (c) 2020 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
  * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
@@ -24,16 +24,17 @@
 
 namespace OCA\Files3d\AppInfo;
 
-use OC\Files\Type\Detection;
+use OCA\Viewer\Event\LoadViewer;
+use OCA\Viewer\Listener\LoadViewerScript;
+use OCP\AppFramework\App;
+use OCP\EventDispatcher\IEventDispatcher;
 
-\OC::$server->query(Application::class);
+class Application extends App {
+    public function __construct() {
+        parent::__construct('files_3d');
 
-$mimeTypeDetector = \OC::$server->getMimeTypeDetector();
-if ($mimeTypeDetector instanceof Detection) {
-    /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
-    $mimeTypeDetector->getAllMappings();
-    $mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
-    $mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
-    $mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
-    $mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
+        $server = $this->getContainer()->getServer();
+        $eventDispatcher = $server->query(IEventDispatcher::class);
+        $eventDispatcher->addServiceListener(LoadViewer::class, LoadViewerScript::class);
+    }
 }
