@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
@@ -22,9 +21,7 @@
  *
  */
 
-namespace OCA\Files3d\AppInfo;
-
-use OC\Files\Type\Detection;
+use OCA\Files3d\AppInfo\Application;
 
 $app = \OC::$server->query(Application::class);
 $app->register();

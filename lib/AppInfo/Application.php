@@ -24,33 +24,38 @@
 
 namespace OCA\Files3d\AppInfo;
 
-use OCA\Viewer\Event\LoadViewer;
 use OCA\Files3d\Listener\LoadFiles3dScript;
+use OCA\Viewer\Event\LoadViewer;
+
 use OCP\AppFramework\App;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IMimeTypeDetector;
 
 class Application extends App {
 
-    const APP_ID = 'files_3d';
-    private $mimeTypeDetector;
+	const APP_ID = 'files_3d';
 
-    public function __construct(IMimeTypeDetector $mimeTypeDetector) {
-        parent::__construct(self::APP_ID);
+	public function __construct() {
+		parent::__construct(self::APP_ID);
+	}
 
-        $this->mimeTypeDetector = $mimeTypeDetector;
+	public function register() {
+		$server = $this->getContainer()->getServer();
 
-        $server = $this->getContainer()->getServer();
-        $eventDispatcher = $server->query(IEventDispatcher::class);
-        $eventDispatcher->addServiceListener(LoadViewer::class, LoadFiles3dScript::class);
-    }
+		/** @var IMimeTypeDetector $mimeTypeDetector */
+		$mimeTypeDetector = $server->query(IMimeTypeDetector::class);
 
-    public function register() {
-        /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
-        $this->mimeTypeDetector->getAllMappings();
-        $this->mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
-        $this->mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
-        $this->mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
-        $this->mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
-    }
+		/** @var IEventDispatcher $eventDispatcher */
+		$eventDispatcher = $server->query(IEventDispatcher::class);
+
+		// registerType without getAllMappings will prevent loading nextcloud's default mappings.
+		$mimeTypeDetector->getAllMappings();
+		$mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
+		$mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
+		$mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
+		$mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
+
+		// Watch Viewer load event
+		$eventDispatcher->addServiceListener(LoadViewer::class, LoadFiles3dScript::class);
+	}
 }

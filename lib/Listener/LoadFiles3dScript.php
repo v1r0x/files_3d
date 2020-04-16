@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace OCA\Files3d\Listener;
 
 use OCA\Files3d\AppInfo\Application;
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Viewer\Event\LoadViewer;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -33,7 +32,7 @@ use OCP\Util;
 
 class LoadFiles3dScript implements IEventListener {
     public function handle(Event $event): void {
-        if (!($event instanceof LoadViewer || $event instanceof LoadAdditionalScriptsEvent)) {
+        if (!($event instanceof LoadViewer)) {
             return;
         }
 
