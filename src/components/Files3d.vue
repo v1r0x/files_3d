@@ -21,47 +21,49 @@
  -->
 
 <template>
-	<div id="threejs-container" />
+	<div :id="`threejs-container-${fileid}`" />
 </template>
 
 <script>
-// import Vue from 'vue'
-
 import {
-	PCFSoftShadowMap,
+	AmbientLight,
+	AnimationMixer,
+	Clock,
+	DirectionalLight,
+	DoubleSide,
+	GridHelper,
+	HemisphereLight,
+	// PCFSoftShadowMap,
 	PerspectiveCamera,
 	Scene,
 	Vector3,
 	WebGLRenderer,
 } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
+import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
+import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js'
 
 export default {
 	name: 'Files3d',
 	props: {
-		active: {
-			type: Boolean,
-			default: false,
-		},
-		basename: {
-			type: String,
-			required: true,
-		},
-		filename: {
-			type: String,
-			required: true,
-		},
-		mime: {
-			type: String,
-			required: true,
-		},
 	},
 	data() {
 		return {
 			container: null,
 			renderer: null,
+			controls: null,
 			camera: null,
 			scene: null,
 			mesh: null,
+			directionalLight: null,
+			hemisphereLight: null,
+			ambientLight: null,
+			animationMixer: {},
+			animationClock: new Clock(),
 		}
 	},
 	computed: {
@@ -70,34 +72,14 @@ export default {
 		active: function(val, old) {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
-				// console.log('now active')
-				console.error('now active')
+				this.initContainer()
+				this.showModel()
 			}
 		},
 	},
 	mounted() {
-		if (!this.container) {
-			this.container = document.getElementById('threejs-container')
-
-			this.renderer = new WebGLRenderer({
-				antialias: true,
-			})
-			this.renderer.setSize(this.$el.naturalWidth, this.$el.naturalHeight)
-			this.renderer.shadowMap.enabled = true
-			this.renderer.shadowMap.type = PCFSoftShadowMap
-
-			this.camera = new PerspectiveCamera(45, this.$el.naturalWidth / this.$el.naturalHeight, 0.1, 2000)
-			this.camera.position.set(5, 0, 0)
-			this.camera.lookAt(new Vector3(0, 0, 0))
-			this.camera.up.set(0, 1, 0)
-
-			this.scene = new Scene()
-
-			this.container.appendChild(this.renderer.domElement)
-			this.scene.add(this.camera)
-			// console.log(this.mime, this.path)
-			console.error(this.mime, this.filename, this.basename, this.active)
-		}
+		this.initContainer()
+		this.showModel()
 	},
 	destroyed() {
 		for (let i = this.scene.children.length - 1; i >= 0; i--) {
@@ -111,10 +93,184 @@ export default {
 		this.renderer = null
 		this.scene = null
 		this.container = null
+		this.controls = null
+		this.directionalLight = null
+		this.hemisphereLight = null
+		this.ambientLight = null
+		this.animationMixer = {}
+		this.animationClock = null
 	},
 	methods: {
+		showModel() {
+			if (!this.active) {
+				return
+			}
+			switch (this.mime) {
+			case 'model/vnd.collada+xml':
+				this.showCollada(this.davPath)
+				break
+			case 'model/gltf-binary':
+			case 'model/gltf+json':
+				this.showGltf(this.davPath)
+				break
+			case 'model/obj-dummy':
+				this.preloadMtl(this.davPath, this.basename)
+				break
+			case 'model/fbx-dummy':
+				this.showFbx(this.davPath)
+				break
+			}
+		},
+		showCollada(path) {
+			const loader = new ColladaLoader()
+			loader.load(path, collada => {
+				const object = collada.scene
+				if (object.rotation.x !== 0) {
+					object.rotation.x = 0
+				}
+				this.addModelToScene(object)
+			},
+			event => { // onProgress
+			},
+			error => { // onError
+				console.error(error)
+			})
+		},
+		showGltf(path) {
+			const loader = new GLTFLoader()
+			loader.load(path, data => {
+				const gltf = data
+				const object = gltf.scene
+				this.addModelToScene(object, gltf.animations)
+			}, event => { // onProgress
+			}, error => { // onError
+				console.error(error)
+			})
+		},
+		preloadMtl(path, filename) {
+			// we assume that the mtl file has the same name as the obj file
+			const filenameMtl = filename.replace('.obj', '.mtl')
+			const parent = path.replace(filename, '')
+			const mtlLoader = new MTLLoader()
+			mtlLoader.setMaterialOptions({
+				side: DoubleSide,
+			})
+			mtlLoader.setPath(parent)
+			// try to load mtl file
+			mtlLoader.load(filenameMtl, materials => {
+				// load obj file with loaded materials
+				this.showObj(parent, filename, materials)
+			}, event => {
+			}, event => {
+				// onError: try to load obj without materials
+				this.showObj(parent, filename)
+			})
+		},
+		showObj(path, filename, materials) {
+			const loader = new OBJLoader2()
+			loader.setModelName(filename)
+			if (materials) {
+				loader.addMaterials(MtlObjBridge.addMaterialsFromMtlLoader(materials))
+			}
+			loader.load(path + filename,
+				object => { // onSuccess
+					this.addModelToScene(object)
+				},
+				event => { // onProgress
+				},
+				error => { // onError
+					console.error(error)
+				}
+			)
+		},
+		showFbx(path) {
+			const loader = new FBXLoader()
+			loader.load(path, object => {
+				this.addModelToScene(object)
+			},
+			event => { // onProgress
+			},
+			event => { // onError
+			})
+		},
+		addModelToScene(model, animations) {
+			// Play first animation if available
+			const anim = animations || model.animations
+			if (anim && anim.length) {
+				this.animationMixer = new AnimationMixer(model)
+				this.animationMixer.clipAction(anim[0]).play()
+			}
+			for (let i = 0; i < model.children.length; i++) {
+				const node = model.children[i]
+				if (node.isMesh) {
+					node.castShadow = true
+					node.receiveShadow = true
+					if (node.material) {
+						node.material.side = DoubleSide
+					}
+				}
+			}
+			this.scene.add(model)
+			this.doneLoading()
+			this.updateViewerSize()
+			this.animate()
+		},
+		animate() {
+			requestAnimationFrame(this.animate)
+			if (this.animationMixer.update) {
+				this.animationMixer.update(this.animationClock.getDelta())
+			}
+			this.render()
+		},
+		render() {
+			if (!this.renderer) {
+				return
+			}
+			this.renderer.render(this.scene, this.camera)
+		},
+		initContainer() {
+			this.disableSwipe()
+			if (!this.container) {
+				this.container = document.getElementById(`threejs-container-${this.fileid}`)
+
+				this.renderer = new WebGLRenderer({
+					antialias: true,
+				})
+				this.renderer.setPixelRatio(window.devicePixelRatio)
+				this.renderer.setSize(700, 600)
+				// this.renderer.shadowMap.enabled = true
+				// this.renderer.shadowMap.type = PCFSoftShadowMap
+
+				this.camera = new PerspectiveCamera(45, 700 / 600, 0.1, 2000)
+				this.camera.position.set(5, 0, 0)
+				this.camera.lookAt(new Vector3(0, 0, 0))
+				this.camera.up.set(0, 1, 0)
+
+				this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+
+				this.scene = new Scene()
+
+				this.ambientLight = new AmbientLight(0x404040)
+				this.hemisphereLight = new HemisphereLight(0x808080, 0x606060)
+				this.directionalLight = new DirectionalLight(0xffffff)
+				this.directionalLight.position.set(this.camera.position)
+				this.directionalLight.castShadow = true
+				this.directionalLight.shadow.camera.top = 2
+				this.directionalLight.shadow.camera.bottom = -2
+				this.directionalLight.shadow.camera.right = 2
+				this.directionalLight.shadow.camera.left = -2
+				this.directionalLight.shadow.mapSize.set(4096, 4096)
+				this.scene.add(this.ambientLight)
+				this.scene.add(this.hemisphereLight)
+				this.scene.add(this.directionalLight)
+				this.scene.add(this.camera)
+				this.scene.add(new GridHelper(100, 10))
+
+				this.container.appendChild(this.renderer.domElement)
+			}
+		},
 		// Updates the dimensions of the modal
-		updateImgSize() {
+		updateViewerSize() {
 			this.naturalHeight = this.$el.naturalHeight
 			this.naturalWidth = this.$el.naturalWidth
 			this.updateHeightWidth()
@@ -125,4 +281,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+	#threejs-container {
+		width: 700px;
+		height: 600px;
+	}
 </style>
