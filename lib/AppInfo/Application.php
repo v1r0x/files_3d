@@ -54,6 +54,7 @@ class Application extends App {
 		$mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
 		$mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
 		$mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
+		$mimeTypeDetector->registerType('stl', 'application/sla', null);
 
 		// Watch Viewer load event
 		$eventDispatcher->addServiceListener(LoadViewer::class, LoadFiles3dScript::class);

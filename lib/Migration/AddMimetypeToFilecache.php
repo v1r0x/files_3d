@@ -20,14 +20,17 @@ class AddMimetypeToFilecache implements IRepairStep {
 
     public function run(IOutput $output) {
         // And update the filecache for it.
-        $mimetypeId = $this->mimeTypeLoader->getId('model/vnd.collada+xml');
-        $this->mimeTypeLoader->updateFilecache('dae', $mimetypeId);
-        $mimetypeId = $this->mimeTypeLoader->getId('model/fbx-dummy');
-        $this->mimeTypeLoader->updateFilecache('fbx', $mimetypeId);
-        $mimetypeId = $this->mimeTypeLoader->getId('model/gltf-binary');
-        $this->mimeTypeLoader->updateFilecache('gltf', $mimetypeId);
-        $mimetypeId = $this->mimeTypeLoader->getId('model/obj-dummy');
-        $this->mimeTypeLoader->updateFilecache('obj', $mimetypeId);
-        $output->info('Added custom mimetype to filecache.');
+		$mimes = [
+			'dae' => 'model/vnd.collada+xml',
+			'fbx' => 'model/fbx-dummy',
+			'gltf' => 'model/gltf-binary',
+			'obj' => 'model/obj-dummy',
+			'stl' => 'application/sla',
+		];
+		foreach($mimes as $ext => $mime) {
+			$mimetypeId = $this->mimeTypeLoader->getId($mime);
+			$this->mimeTypeLoader->updateFilecache($ext, $mimetypeId);
+        	$output->info("Added custom $ext => $mime mimetype to filecache.");
+		}
     }
 }

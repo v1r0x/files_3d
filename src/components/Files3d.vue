@@ -33,6 +33,8 @@ import {
 	DoubleSide,
 	GridHelper,
 	HemisphereLight,
+	Mesh,
+	MeshPhongMaterial,
 	// PCFSoftShadowMap,
 	PerspectiveCamera,
 	Scene,
@@ -46,6 +48,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js'
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 export default {
 	name: 'Files3d',
@@ -119,6 +122,9 @@ export default {
 			case 'model/fbx-dummy':
 				this.showFbx(this.davPath)
 				break
+			case 'application/sla':
+				this.showStl(this.davPath)
+				break
 			}
 		},
 		showCollada(path) {
@@ -187,6 +193,24 @@ export default {
 			const loader = new FBXLoader()
 			loader.load(path, object => {
 				this.addModelToScene(object)
+			},
+			event => { // onProgress
+			},
+			event => { // onError
+			})
+		},
+		showStl(path) {
+			const loader = new STLLoader()
+			loader.load(path, object => {
+				const material = new MeshPhongMaterial({
+					color: 0xAA5555,
+					specular: 0x111111,
+					shininess: 200
+				})
+				const mesh = new Mesh(object, material)
+				mesh.castShadow = true
+				mesh.receiveShadow = true
+				this.addModelToScene(mesh)
 			},
 			event => { // onProgress
 			},
