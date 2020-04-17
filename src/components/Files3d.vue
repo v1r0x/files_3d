@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div :id="`threejs-container-${fileid}`" />
+	<div :id="`threejs-${fileid}`" class="threejs-container" />
 </template>
 
 <script>
@@ -205,7 +205,7 @@ export default {
 				const material = new MeshPhongMaterial({
 					color: 0xAA5555,
 					specular: 0x111111,
-					shininess: 200
+					shininess: 200,
 				})
 				const mesh = new Mesh(object, material)
 				mesh.castShadow = true
@@ -255,17 +255,18 @@ export default {
 		initContainer() {
 			this.disableSwipe()
 			if (!this.container) {
-				this.container = document.getElementById(`threejs-container-${this.fileid}`)
+				this.setViewerSize()
+				this.container = document.getElementById(`threejs-${this.fileid}`)
 
 				this.renderer = new WebGLRenderer({
 					antialias: true,
 				})
 				this.renderer.setPixelRatio(window.devicePixelRatio)
-				this.renderer.setSize(700, 600)
+				this.renderer.setSize(this.naturalWidth, this.naturalHeight)
 				// this.renderer.shadowMap.enabled = true
 				// this.renderer.shadowMap.type = PCFSoftShadowMap
 
-				this.camera = new PerspectiveCamera(45, 700 / 600, 0.1, 2000)
+				this.camera = new PerspectiveCamera(45, this.naturalWidth / this.naturalHeight, 0.1, 2000)
 				this.camera.position.set(5, 0, 0)
 				this.camera.lookAt(new Vector3(0, 0, 0))
 				this.camera.up.set(0, 1, 0)
@@ -293,10 +294,13 @@ export default {
 				this.container.appendChild(this.renderer.domElement)
 			}
 		},
+		setViewerSize() {
+			this.naturalHeight = this.$el.offsetHeight
+			this.naturalWidth = this.$el.offsetWidth
+		},
 		// Updates the dimensions of the modal
 		updateViewerSize() {
-			this.naturalHeight = this.$el.naturalHeight
-			this.naturalWidth = this.$el.naturalWidth
+			this.setViewerSize()
 			this.updateHeightWidth()
 			this.doneLoading()
 		},
@@ -305,8 +309,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-	#threejs-container {
-		width: 700px;
-		height: 600px;
+	.threejs-container {
+		width: 100vw;
+		height: 90vh;
+		align-self: center;
+		justify-self: center;
 	}
 </style>
