@@ -1,9 +1,8 @@
 <?php
-
 /**
- * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @copyright Copyright (c) 2018, 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
- * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
+ * @author Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,26 +21,7 @@
  *
  */
 
-OCP\Util::addStyle('files_3d', 'style');
-OCP\Util::addScript('files_3d', 'vendor/three.min');
-OCP\Util::addScript('files_3d', 'vendor/controls/OrbitControls');
-OCP\Util::addScript('files_3d', 'vendor/libs/inflate.min');
-OCP\Util::addScript('files_3d', 'vendor/loaders/LoaderSupport');
-OCP\Util::addScript('files_3d', 'vendor/loaders/ColladaLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/FBXLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/GLTFLoader');
-OCP\Util::addScript('files_3d', 'vendor/loaders/OBJLoader2');
-OCP\Util::addScript('files_3d', 'vendor/loaders/MTLLoader');
-OCP\Util::addScript('files_3d', 'loader');
+use OCA\Files3d\AppInfo\Application;
 
-use OC\Files\Type\Detection;
-
-$mimeTypeDetector = \OC::$server->getMimeTypeDetector();
-if ($mimeTypeDetector instanceof Detection) {
-    /** registerType without getAllMappings will prevent loading nextcloud's default mappings. */
-    $mimeTypeDetector->getAllMappings();
-    $mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
-    $mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
-    $mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
-    $mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
-}
+$app = \OC::$server->query(Application::class);
+$app->register();
