@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				'model/obj-dummy',
 				// FBX has no mime
 				'model/fbx-dummy',
+				'application/sla',
 			],
 
 			// your vue component view
