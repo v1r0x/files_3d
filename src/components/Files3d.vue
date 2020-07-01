@@ -201,13 +201,15 @@ export default {
 		},
 		showStl(path) {
 			const loader = new STLLoader()
-			loader.load(path, object => {
+			loader.load(path, geometry => {
 				const material = new MeshPhongMaterial({
 					color: 0xAA5555,
 					specular: 0x111111,
 					shininess: 200,
+					vertexColors: geometry.hasColors,
+					opacity: geometry.hasColors ? geometry.alpha : 1,
 				})
-				const mesh = new Mesh(object, material)
+				const mesh = new Mesh(geometry, material)
 				mesh.castShadow = true
 				mesh.receiveShadow = true
 				this.addModelToScene(mesh)
@@ -263,8 +265,7 @@ export default {
 				})
 				this.renderer.setPixelRatio(window.devicePixelRatio)
 				this.renderer.setSize(this.naturalWidth, this.naturalHeight)
-				// this.renderer.shadowMap.enabled = true
-				// this.renderer.shadowMap.type = PCFSoftShadowMap
+				this.renderer.shadowMap.enabled = true
 
 				this.camera = new PerspectiveCamera(45, this.naturalWidth / this.naturalHeight, 0.1, 2000)
 				this.camera.position.set(5, 0, 0)
@@ -278,13 +279,15 @@ export default {
 				this.ambientLight = new AmbientLight(0x404040)
 				this.hemisphereLight = new HemisphereLight(0x808080, 0x606060)
 				this.directionalLight = new DirectionalLight(0xffffff)
-				this.directionalLight.position.set(this.camera.position)
+				this.directionalLight.position.set(1, 1, 1)
 				this.directionalLight.castShadow = true
 				this.directionalLight.shadow.camera.top = 2
 				this.directionalLight.shadow.camera.bottom = -2
 				this.directionalLight.shadow.camera.right = 2
 				this.directionalLight.shadow.camera.left = -2
-				this.directionalLight.shadow.mapSize.set(4096, 4096)
+				this.directionalLight.shadow.camera.near = 1
+				this.directionalLight.shadow.camera.far = 10
+				this.directionalLight.shadow.bias = 0.002
 				this.scene.add(this.ambientLight)
 				this.scene.add(this.hemisphereLight)
 				this.scene.add(this.directionalLight)
