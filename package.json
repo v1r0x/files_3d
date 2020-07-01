@@ -1,6 +1,6 @@
 {
   "name": "files_3d",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Adds support for different 3D file formats (.dae, .fbx, .gltf, .obj) to Nextcloud. Based on three.js.",
   "main": "index.js",
   "private": true,
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/v1r0x/files_3d#readme",
   "dependencies": {
     "dat.gui": "^0.7.7",
-    "three": "^0.115.0",
+    "three": "^0.118.3",
     "vue": "^2.6.11"
   },
   "devDependencies": {
