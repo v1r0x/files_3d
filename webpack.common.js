@@ -46,7 +46,7 @@ module.exports = {
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new StyleLintPlugin(),
+		// new StyleLintPlugin(),
 	],
 	resolve: {
 		extensions: ['*', '.js', '.vue'],
