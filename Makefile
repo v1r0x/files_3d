@@ -12,32 +12,6 @@
 # * curl: used if phpunit and composer are not installed to fetch them from the web
 # * tar: for building the archive
 # * npm: for building and testing everything JS
-#
-# If no composer.json is in the app root directory, the Composer step
-# will be skipped. The same goes for the package.json which can be located in
-# the app root or the js/ directory.
-#
-# The npm command by launches the npm build script:
-#
-#    npm run build
-#
-# The npm test command launches the npm test script:
-#
-#    npm run test
-#
-# The idea behind this is to be completely testing and build tool agnostic. All
-# build tools and additional package managers should be installed locally in
-# your project, since this won't pollute people's global namespace.
-#
-# The following npm scripts in your package.json install and update the bower
-# and npm dependencies and use gulp as build system (notice how everything is
-# run from the node_modules folder):
-#
-#    "scripts": {
-#        "test": "node node_modules/gulp-cli/bin/gulp.js karma",
-#        "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
-#        "build": "node node_modules/gulp-cli/bin/gulp.js"
-#    },
 
 app_name=$(notdir $(CURDIR))
 build_tools_directory=$(CURDIR)/build/tools
@@ -48,8 +22,6 @@ appstore_package_name=$(appstore_build_directory)/$(app_name)
 nc_cert_directory=$(HOME)/.nextcloud/certificates
 npm=$(shell which npm 2> /dev/null)
 composer=$(shell which composer 2> /dev/null)
-
-all: build
 
 # Fetches the PHP and JS dependencies and compiles the JS. If no composer.json
 # is present, the composer step is skipped, if no package.json or js/package.json
@@ -82,6 +54,17 @@ else
 	composer update --prefer-dist
 endif
 
+
+all: dev-setup appstore
+
+# Dev environment setup
+dev-setup: distclean npm-init composer
+
+# Update npm
+.PHONY: npm-init
+npm-init:
+	npm install
+
 # Installs npm dependencies
 .PHONY: npm
 npm:
@@ -94,39 +77,21 @@ endif
 # Removes the appstore build
 .PHONY: clean
 clean:
-	rm -rf ./build
+	rm -rf $(build_dir)
+	rm -rf js/*
+	mkdir -p js
 
 # Same as clean but also removes dependencies installed by composer, bower and
 # npm
 .PHONY: distclean
 distclean: clean
-	rm -rf vendor
 	rm -rf node_modules
-	rm -rf js/vendor
-	rm -rf js/node_modules
+	rm -rf ./vendor
 
-# Builds the source and appstore package
-.PHONY: dist
-dist:
-	make source
-	make appstore
-
-# Builds the source package
-.PHONY: source
-source:
-	rm -rf $(source_build_directory)
-	mkdir -p $(source_build_directory)
-	tar cvzf $(source_package_name).tar.gz ../$(app_name) \
-	--exclude-vcs \
-	--exclude="../$(app_name)/build" \
-	--exclude="../$(app_name)/js/node_modules" \
-	--exclude="../$(app_name)/node_modules" \
-	--exclude="../$(app_name)/*.log" \
-	--exclude="../$(app_name)/js/*.log" \
 
 # Builds the source package for the app store, ignores php and js tests
 .PHONY: appstore
-appstore:
+appstore: distclean npm-init build
 	rm -rf $(appstore_build_directory)
 	mkdir -p $(appstore_build_directory)
 	tar cvzf $(appstore_package_name).tar.gz \
@@ -137,20 +102,19 @@ appstore:
 	--exclude="../$(app_name)/*.log" \
 	--exclude="../$(app_name)/phpunit*xml" \
 	--exclude="../$(app_name)/composer.*" \
-	--exclude="../$(app_name)/js/node_modules" \
-	--exclude="../$(app_name)/js/tests" \
-	--exclude="../$(app_name)/js/test" \
-	--exclude="../$(app_name)/js/*.log" \
-	--exclude="../$(app_name)/js/package.json" \
-	--exclude="../$(app_name)/js/bower.json" \
-	--exclude="../$(app_name)/js/karma.*" \
-	--exclude="../$(app_name)/js/protractor.*" \
 	--exclude="../$(app_name)/package.json" \
+	--exclude="../$(app_name)/package-lock.json" \
 	--exclude="../$(app_name)/bower.json" \
 	--exclude="../$(app_name)/karma.*" \
 	--exclude="../$(app_name)/protractor\.*" \
 	--exclude="../$(app_name)/.*" \
 	--exclude="../$(app_name)/js/.*" \
+	--exclude="../$(app_name)/screenshots" \
+	--exclude="../$(app_name)/src" \
+	--exclude="../$(app_name)/tests" \
+	--exclude="../$(app_name)/node_modules" \
+	--exclude="../$(app_name)/vendor" \
+	--exclude="../$(app_name)/webpack.*" \
 	../$(app_name) \
 
 	@if [ -f $(nc_cert_directory)/$(app_name).key ]; then \
