@@ -1,5 +1,5 @@
 {
-    "name": "Files Three",
+    "name": "v1r0x/files_3d",
     "description": "3D viewer for nextcloud",
     "type": "project",
     "license": "AGPL",
@@ -10,6 +10,6 @@
     ],
     "require": {},
     "require-dev": {
-        "phpunit/phpunit": "^7.*"
+        "phpunit/phpunit": "~7.0"
     }
 }
