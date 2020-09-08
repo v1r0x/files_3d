@@ -206,7 +206,7 @@ export default {
 					color: 0xAA5555,
 					specular: 0x111111,
 					shininess: 200,
-					vertexColors: geometry.hasColors,
+					vertexColors: !!geometry.hasColors,
 					opacity: geometry.hasColors ? geometry.alpha : 1,
 				})
 				const mesh = new Mesh(geometry, material)
