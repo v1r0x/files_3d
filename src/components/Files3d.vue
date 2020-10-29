@@ -48,6 +48,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 export default {
@@ -124,6 +125,9 @@ export default {
 				break
 			case 'application/sla':
 				this.showStl(this.davPath)
+				break
+			case 'model/vnd.ply':
+				this.showPly(this.davPath)
 				break
 			}
 		},
@@ -202,6 +206,27 @@ export default {
 		showStl(path) {
 			const loader = new STLLoader()
 			loader.load(path, geometry => {
+				const material = new MeshPhongMaterial({
+					color: 0xAA5555,
+					specular: 0x111111,
+					shininess: 200,
+					vertexColors: !!geometry.hasColors,
+					opacity: geometry.hasColors ? geometry.alpha : 1,
+				})
+				const mesh = new Mesh(geometry, material)
+				mesh.castShadow = true
+				mesh.receiveShadow = true
+				this.addModelToScene(mesh)
+			},
+			event => { // onProgress
+			},
+			event => { // onError
+			})
+		},
+		showPly(path) {
+			const loader = new PLYLoader()
+			loader.load(path, geometry => {
+				geometry.computeVertexNormals()
 				const material = new MeshPhongMaterial({
 					color: 0xAA5555,
 					specular: 0x111111,
