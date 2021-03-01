@@ -29,7 +29,7 @@
   "homepage": "https://github.com/v1r0x/files_3d#readme",
   "dependencies": {
     "dat.gui": "^0.7.7",
-    "three": "^0.122.0",
+    "three": "^0.125.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {
