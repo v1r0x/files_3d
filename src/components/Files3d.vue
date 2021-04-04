@@ -259,15 +259,16 @@ export default {
 				if (node.isMesh) {
 					node.castShadow = true
 					node.receiveShadow = true
+					if (node.geometry) {
+						node.geometry.computeBoundingBox();
+					}
 					if (node.material) {
 						node.material.side = DoubleSide
 					}
 				}
 			}
-			model.geometry.computeBoundingBox()
 
-			const box = new Box3()
-			this.boundingBox = box.copy(model.geometry.boundingBox).applyMatrix4(model.matrixWorld)
+			this.boundingBox = new Box3().setFromObject(model)
 			this.scene.add(model)
 			this.doneLoading()
 			this.updateViewerSize()
