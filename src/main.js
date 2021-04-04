@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				'application/sla',
 				// PLY has no mime
 				'model/vnd.ply',
+				'text/x-gcode',
 			],
 
 			// your vue component view

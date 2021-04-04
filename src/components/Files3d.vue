@@ -129,6 +129,9 @@ export default {
 			case 'model/vnd.ply':
 				this.showPly(this.davPath)
 				break
+			case 'text/x-gcode':
+				this.showGcode(this.davPath)
+				break
 			}
 		},
 		showCollada(path) {
@@ -238,6 +241,19 @@ export default {
 				mesh.castShadow = true
 				mesh.receiveShadow = true
 				this.addModelToScene(mesh)
+			},
+			event => { // onProgress
+			},
+			event => { // onError
+			})
+		},
+		showGcode(path) {
+			console.log("show gocede!", path)
+			const loader = new GCodeLoader()
+			loader.load(path, object => {
+				// we don't define any materials here,
+				// as the GCodeLoader defines the materials
+				this.addModelToScene(object)
 			},
 			event => { // onProgress
 			},
