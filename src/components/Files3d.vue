@@ -292,11 +292,10 @@ export default {
 			//    #       x        #
 			//    #                # <-- boundingBox of the object
 			//    ##################
-			this.camera.position = 
-				this.boundingBox.max.clone()
+			this.camera.position = this.boundingBox.max.clone()
 				.multiplyScalar(2)
-				.applyAxisAngle(new Vector3(0, 1, 0), Math.PI/4)
-				
+				.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 4)
+
 			this.camera.updateProjectionMatrix()
 			this.controls.update()
 			this.render()
