@@ -248,7 +248,6 @@ export default {
 			})
 		},
 		showGcode(path) {
-			console.log("show gocede!", path)
 			const loader = new GCodeLoader()
 			loader.load(path, object => {
 				// we don't define any materials here,
