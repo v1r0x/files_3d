@@ -45,6 +45,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { GCodeLoader } from 'three/examples/jsm/loaders/GCodeLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
@@ -277,7 +278,7 @@ export default {
 					node.castShadow = true
 					node.receiveShadow = true
 					if (node.geometry) {
-						node.geometry.computeBoundingBox();
+						node.geometry.computeBoundingBox()
 					}
 					if (node.material) {
 						node.material.side = DoubleSide
@@ -293,7 +294,6 @@ export default {
 			this.animate()
 		},
 		pointCameraAtObject() {
-
 			// We want to point the camera at the center of the object
 			const center = new Vector3()
 			this.boundingBox.getCenter(center)
