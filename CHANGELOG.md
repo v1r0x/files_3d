@@ -1,10 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.4.0
+### Added
+- Support latest NC release (Version 21)
+- Support for GCode (`.gcode`) files (thanks to @csicar !)
+### Fixed
+- Support for GLB (`.glb`) and GLTF files
+### Changed
+- Set initial viewing angle (thanks to @csicar !)
+- Updated Dependencies
+
 ## 0.3.3
 ### Added
 - Support latest NC release (Version 20)
-- Support for PLY files
+- Support for PLY (`.ply`) files
 ### Changed
 - Updated Dependencies
 
@@ -27,7 +37,7 @@ All notable changes to this project will be documented in this file.
 
 ## 0.2.0
 ### Added
-- support for `.stl` files
+- support for STL (`.stl`) files
 ### Fixed
 - Working support for different file types (thanks to @awesome-manuel)
 ### Changed
@@ -36,7 +46,7 @@ All notable changes to this project will be documented in this file.
 
 ## 0.1.0
 ### Added
-- Support for more formats (`.fbx`, `.gltf`, `.obj`)
+- Support for FBX, GLTF and OBJ files (`.fbx`, `.gltf`, `.obj`)
 ### Fixed
 ### Changed
 
