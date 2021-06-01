@@ -28,6 +28,7 @@
 import {
 	AmbientLight,
 	AnimationMixer,
+	Box3,
 	Clock,
 	DirectionalLight,
 	DoubleSide,
@@ -64,6 +65,7 @@ export default {
 			container: null,
 			renderer: null,
 			controls: null,
+			boundingBox: null,
 			camera: null,
 			scene: null,
 			mesh: null,
@@ -98,6 +100,7 @@ export default {
 		this.renderer.dispose()
 		this.renderer = null
 		this.scene = null
+		this.boundingBox = null
 		this.container = null
 		this.controls = null
 		this.directionalLight = null
@@ -273,15 +276,47 @@ export default {
 				if (node.isMesh) {
 					node.castShadow = true
 					node.receiveShadow = true
+					if (node.geometry) {
+						node.geometry.computeBoundingBox();
+					}
 					if (node.material) {
 						node.material.side = DoubleSide
 					}
 				}
 			}
+
+			this.boundingBox = new Box3().setFromObject(model)
 			this.scene.add(model)
 			this.doneLoading()
 			this.updateViewerSize()
+			this.pointCameraAtObject()
 			this.animate()
+		},
+		pointCameraAtObject() {
+
+			// We want to point the camera at the center of the object
+			const center = new Vector3()
+			this.boundingBox.getCenter(center)
+			// We use `.controls.target` instead of `lookAt`,
+			// because the OrbitControls will override value set by `lookAt`
+			this.controls.target = center
+
+			//                   x <-- new  camera position
+			//
+			//                              x <-- boundingBox.max * 2
+			//
+			//    #################x <-- boundingBox.max
+			//    #                #
+			//    #       x        #
+			//    #                # <-- boundingBox of the object
+			//    ##################
+			this.camera.position = this.boundingBox.max.clone()
+				.multiplyScalar(2)
+				.applyAxisAngle(new Vector3(0, 1, 0), Math.PI / 4)
+
+			this.camera.updateProjectionMatrix()
+			this.controls.update()
+			this.render()
 		},
 		animate() {
 			requestAnimationFrame(this.animate)
