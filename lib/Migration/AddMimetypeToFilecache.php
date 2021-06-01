@@ -23,7 +23,8 @@ class AddMimetypeToFilecache implements IRepairStep {
 		$mimes = [
 			'dae' => 'model/vnd.collada+xml',
 			'fbx' => 'model/fbx-dummy',
-			'gltf' => 'model/gltf-binary',
+			'glb' => 'model/gltf-binary',
+			'gltf' => 'model/gltf+json',
 			'obj' => 'model/obj-dummy',
 			'stl' => 'application/sla',
 			'ply' => 'model/vnd.ply',

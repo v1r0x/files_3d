@@ -1,5 +1,5 @@
 <!--
- - @copyright Copyright (c) 2019 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
+ - @copyright Copyright (c) 2019, 2020, 2021 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  -
  - @author Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  -
@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div :id="`threejs-${fileid}`" class="threejs-container" />
+	<div :id="`threejs-${id}`" class="threejs-container" />
 </template>
 
 <script>
@@ -46,17 +46,21 @@ import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
-import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
-import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 export default {
 	name: 'Files3d',
 	props: {
+		etag: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
+			id: (new Date()).getTime(),
 			container: null,
 			renderer: null,
 			controls: null,
@@ -69,8 +73,6 @@ export default {
 			animationMixer: {},
 			animationClock: new Clock(),
 		}
-	},
-	computed: {
 	},
 	watch: {
 		active(val, old) {
@@ -168,6 +170,7 @@ export default {
 			mtlLoader.setPath(parent)
 			// try to load mtl file
 			mtlLoader.load(filenameMtl, materials => {
+				materials.preload()
 				// load obj file with loaded materials
 				this.showObj(parent, filename, materials)
 			}, event => {
@@ -177,10 +180,9 @@ export default {
 			})
 		},
 		showObj(path, filename, materials) {
-			const loader = new OBJLoader2()
-			loader.setModelName(filename)
+			const loader = new OBJLoader()
 			if (materials) {
-				loader.addMaterials(MtlObjBridge.addMaterialsFromMtlLoader(materials))
+				loader.setMaterials(materials)
 			}
 			loader.load(path + filename,
 				object => { // onSuccess
@@ -283,7 +285,7 @@ export default {
 			this.disableSwipe()
 			if (!this.container) {
 				this.setViewerSize()
-				this.container = document.getElementById(`threejs-${this.fileid}`)
+				this.container = document.getElementById(`threejs-${this.id}`)
 
 				this.renderer = new WebGLRenderer({
 					antialias: true,
