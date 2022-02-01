@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.0
+### Added
+### Fixed
+### Changed
+- Updated Dependencies
+- Bump supported NC versions to 21-23
+
 ## 0.4.0
 ### Added
 - Support latest NC release (Version 21)
