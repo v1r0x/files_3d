@@ -52,7 +52,8 @@ class Application extends App {
 		$mimeTypeDetector->getAllMappings();
 		$mimeTypeDetector->registerType('dae', 'model/vnd.collada+xml', null);
 		$mimeTypeDetector->registerType('fbx', 'model/fbx-dummy', null);
-		$mimeTypeDetector->registerType('gltf', 'model/gltf-binary', 'model/gltf+json');
+		$mimeTypeDetector->registerType('glb', 'model/gltf-binary', null);
+		$mimeTypeDetector->registerType('gltf', 'model/gltf+json', null);
 		$mimeTypeDetector->registerType('obj', 'model/obj-dummy', null);
 		$mimeTypeDetector->registerType('stl', 'application/sla', null);
 		// There is no standard type for gcode, therefore we use cura's mimetype for gcode
