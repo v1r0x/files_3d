@@ -1,9 +1,9 @@
 <!--
- - @copyright Copyright (c) 2019, 2020, 2021 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
+ - @copyright Copyright (c) 2019, 2020, 2021, 2022 Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  -
  - @author Vinzenz Rosenkranz <vinzenz.rosenkranz@posteo.de>
  -
- - @license GNU AGPL version 3 or any later version
+ - @license AGPL-3.0-or-later
  -
  - This program is free software: you can redistribute it and/or modify
  - it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,7 @@ import {
 	AnimationMixer,
 	Box3,
 	Clock,
+	Color,
 	DirectionalLight,
 	DoubleSide,
 	GridHelper,
@@ -51,6 +52,8 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
+import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
+import { GUI } from 'lil-gui'
 
 export default {
 	name: 'Files3d',
@@ -75,6 +78,21 @@ export default {
 			ambientLight: null,
 			animationMixer: {},
 			animationClock: new Clock(),
+			gridHelper: new GridHelper(100, 10),
+			normals: [],
+			gui: null,
+			guiParams: {
+				edit: {
+					backgroundColor: {r: 0, g: 0, b: 0},
+					showGrid: true,
+					showOutline: false,
+				},
+				normals: {
+					show: false,
+					color: {r: 0, g: 1, b: 0},
+					length: 10,
+				}
+			},
 		}
 	},
 	watch: {
@@ -88,6 +106,7 @@ export default {
 	},
 	mounted() {
 		this.initContainer()
+		this.initGui();
 		this.showModel()
 	},
 	destroyed() {
@@ -111,6 +130,79 @@ export default {
 		this.animationClock = null
 	},
 	methods: {
+		initGui() {
+			const container = document.getElementById(`threejs-${this.id}`)
+			if(!container || !container.classList.contains('viewer__file--active')) {
+				return;
+			}
+
+			this.gui = new GUI({
+				container: document.getElementById(`threejs-${this.id}`)
+			})
+			// Display GUI on right top of threejs container
+			const guiDom = this.gui.domElement;
+			guiDom.style.position = 'absolute'
+			guiDom.style.top = '0px'
+			guiDom.style.right = '0px'
+
+			const editGroup = this.gui.addFolder('Edit Settings')
+			editGroup.close()
+			editGroup.addColor(this.guiParams.edit, 'backgroundColor').name('Background Color').onChange(value => this.setBackgroundColor(value))
+			editGroup.add(this.guiParams.edit, 'showGrid').name('Show Grid').onChange(value => this.toggleGrid(value))
+			const normalsGroup = this.gui.addFolder('Normals Settings')
+			normalsGroup.close()
+			normalsGroup.add(this.guiParams.normals, 'show').name('Show Normals').onChange(value => this.toggleNormals(value))
+			normalsGroup.addColor(this.guiParams.normals, 'color').name('Normals Color').onChange(value => this.changeNormalProp('color', value))
+			normalsGroup.add(this.guiParams.normals, 'length', 1, 250, 1).name('Normals Length').onChange(value => this.changeNormalProp('length', value))
+
+			// Wait for rendering to update container's position (otherwise it's size is wrong)
+			this.$nextTick(_ => {
+				container.style.position = 'relative'
+			})
+		},
+		setBackgroundColor(color) {
+			this.scene.background = new Color(color.r, color.g, color.b)
+		},
+		toggleGrid(value) {
+			this.gridHelper.visible = value;
+		},
+		addNormalsTo(list) {
+			for(let i=0; i<list.length; i++) {
+				const grpOrMesh = list[i];
+				if(grpOrMesh.type == 'Group') {
+					this.addNormalsTo(grpOrMesh.children);
+				} else if(grpOrMesh.type == 'Mesh') {
+					const color = new Color(this.guiParams.normals.color.r, this.guiParams.normals.color.g, this.guiParams.normals.color.b)
+					const modelNormals = new VertexNormalsHelper(grpOrMesh, this.guiParams.normals.length, color)
+					this.normals.push(modelNormals)
+					this.scene.add(modelNormals)
+				}
+			}
+		},
+		toggleNormals(value) {
+			if(value && this.normals.length == 0) {
+				this.addNormalsTo(this.scene.children)
+			} else {
+				for(let i=0; i<this.normals.length; i++) {
+					this.normals[i].visible = value
+					// this.normals[i].update()
+				}
+			}
+		},
+		changeNormalProp(prop, value) {
+			console.log(prop, value, this.normals);
+			if(prop == 'color') {
+				const color = new Color(value.r, value.g, value.b)
+				for(let i=0; i<this.normals.length; i++) {
+					this.normals[i].material.color = color
+				}
+			} else if(prop == 'length') {
+				for(let i=0; i<this.normals.length; i++) {
+					this.normals[i].size = value
+					this.normals[i].update()
+				}
+			}
+		},
 		showModel() {
 			if (!this.active) {
 				return
@@ -353,6 +445,11 @@ export default {
 
 				this.scene = new Scene()
 
+				// Set (gui) editable values
+				const c = this.guiParams.edit.backgroundColor;
+				this.scene.background = new Color(c.r, c.g, c.b)
+				this.gridHelper.visible = this.guiParams.edit.showGrid;
+
 				this.ambientLight = new AmbientLight(0x404040)
 				this.hemisphereLight = new HemisphereLight(0x808080, 0x606060)
 				this.directionalLight = new DirectionalLight(0xffffff)
@@ -369,7 +466,7 @@ export default {
 				this.scene.add(this.hemisphereLight)
 				this.scene.add(this.directionalLight)
 				this.scene.add(this.camera)
-				this.scene.add(new GridHelper(100, 10))
+				this.scene.add(this.gridHelper)
 
 				this.container.appendChild(this.renderer.domElement)
 			}
