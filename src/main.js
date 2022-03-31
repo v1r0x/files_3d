@@ -22,37 +22,35 @@
 
 import Files3d from './components/Files3d.vue'
 
-document.addEventListener('DOMContentLoaded', function() {
-	if (OCA.Viewer) {
-		OCA.Viewer.registerHandler({
-			// unique id
-			id: 'files_3d',
+if (OCA.Viewer) {
+	OCA.Viewer.registerHandler({
+		// unique id
+		id: 'files_3d',
 
-			// optional, it will group every view of this group and
-			// use the proper view when building the file list
-			// of the slideshow.
-			// e.g. you open an image/jpeg that have the `media` group
-			// you will be able to see the video/mpeg from the `video` handler
-			// files that also have the `media` group set.
-			group: '3d',
+		// optional, it will group every view of this group and
+		// use the proper view when building the file list
+		// of the slideshow.
+		// e.g. you open an image/jpeg that have the `media` group
+		// you will be able to see the video/mpeg from the `video` handler
+		// files that also have the `media` group set.
+		group: '3d',
 
-			// the list of mimes your component is able to display
-			mimes: [
-				'model/vnd.collada+xml',
-				'model/gltf-binary',
-				'model/gltf+json',
-				// OBJ has no mime
-				'model/obj-dummy',
-				// FBX has no mime
-				'model/fbx-dummy',
-				'application/sla',
-				// PLY has no mime
-				'model/vnd.ply',
-				'text/x-gcode',
-			],
+		// the list of mimes your component is able to display
+		mimes: [
+			'model/vnd.collada+xml',
+			'model/gltf-binary',
+			'model/gltf+json',
+			// OBJ has no mime
+			'model/obj-dummy',
+			// FBX has no mime
+			'model/fbx-dummy',
+			'application/sla',
+			// PLY has no mime
+			'model/vnd.ply',
+			'text/x-gcode',
+		],
 
-			// your vue component view
-			component: Files3d,
-		})
-	}
-})
+		// your vue component view
+		component: Files3d,
+	})
+}
