@@ -60,6 +60,7 @@ class Application extends App {
 		$mimeTypeDetector->registerType('stl', 'application/sla', null);
 		// There is no standard type for gcode, therefore we use cura's mimetype for gcode
 		$mimeTypeDetector->registerType('gcode', 'text/x-gcode', null);
+		$mimeTypeDetector->registerType('ifc', 'application/x-step', null);
 
 		// Watch Viewer load event
 		$eventDispatcher->addServiceListener(LoadViewer::class, LoadFiles3dScript::class);

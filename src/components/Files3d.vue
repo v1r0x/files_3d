@@ -52,7 +52,8 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
-import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
+import { IFCLoader } from 'three/examples/jsm/loaders/IFCLoader.js'
+import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js'
 import { GUI } from 'lil-gui'
 
 export default {
@@ -230,6 +231,9 @@ export default {
 			case 'text/x-gcode':
 				this.showGcode(this.davPath)
 				break
+			case 'application/x-step':
+				this.showIfc(this.davPath)
+				break
 			}
 		},
 		showCollada(path) {
@@ -355,6 +359,17 @@ export default {
 			event => { // onProgress
 			},
 			event => { // onError
+			})
+		},
+		showIfc(path) {
+			const loader = new IFCLoader()
+			loader.load(path, data => {
+				const gltf = data
+				const object = gltf.scene
+				this.addModelToScene(object, gltf.animations)
+			}, event => { // onProgress
+			}, error => { // onError
+				console.error(error)
 			})
 		},
 		addModelToScene(model, animations) {

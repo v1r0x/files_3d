@@ -48,6 +48,7 @@ if (OCA.Viewer) {
 			// PLY has no mime
 			'model/vnd.ply',
 			'text/x-gcode',
+			'application/x-step',
 		],
 
 		// your vue component view
