@@ -29,7 +29,7 @@
   "homepage": "https://github.com/v1r0x/files_3d#readme",
   "dependencies": {
     "lil-gui": "^0.16.0",
-    "three": "^0.138",
+    "three": "^0.139.2",
     "vue": "^2.6.14"
   },
   "devDependencies": {
