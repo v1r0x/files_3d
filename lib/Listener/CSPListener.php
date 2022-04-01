@@ -39,6 +39,7 @@ class CSPListener implements IEventListener {
 
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('data:');
+		$csp->allowEvalScript(true); // required for IFC
 
 		$event->addPolicy($csp);
 	}

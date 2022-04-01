@@ -29,6 +29,7 @@ class AddMimetypeToFilecache implements IRepairStep {
 			'stl' => 'application/sla',
 			'ply' => 'model/vnd.ply',
 			'gcode' => 'text/x-gcode',
+			'ifc' => 'application/x-step',
 		];
 		foreach($mimes as $ext => $mime) {
 			$mimetypeId = $this->mimeTypeLoader->getId($mime);
